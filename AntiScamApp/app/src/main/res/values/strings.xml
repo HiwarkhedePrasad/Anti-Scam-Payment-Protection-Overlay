@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AntiScam App</string>
+    <string name="accessibility_service_description">Scans screen for potential scams involving UPI PIN requests.</string>
+    <string name="overlay_warning_text">SCAM DETECTED!\nDO NOT ENTER YOUR PIN!</string>
+    <string name="enable_service_button">Enable Accessibility Service</string>
+    <string name="enable_overlay_button">Enable Overlay Permission</string>
+    <string name="permission_status_text">Permissions Status:</string>
+</resources>

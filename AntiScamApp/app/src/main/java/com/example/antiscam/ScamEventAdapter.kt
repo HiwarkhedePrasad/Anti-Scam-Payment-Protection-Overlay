@@ -1,6 +1,5 @@
 package com.example.antiscam
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ class ScamEventAdapter(private val events: List<ScamEvent>) :
         val tvSnippet: TextView = view.findViewById(R.id.tv_item_snippet)
         val tvTime: TextView = view.findViewById(R.id.tv_item_time)
         val tvAction: TextView = view.findViewById(R.id.tv_item_action)
+        val riskCircle: View = view.findViewById(R.id.risk_badge_circle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,15 +37,26 @@ class ScamEventAdapter(private val events: List<ScamEvent>) :
         holder.tvSnippet.text = event.textSnippet
         holder.tvTime.text = timeFormat.format(Date(event.timestamp))
 
-        // Action badge styling
-        if (event.action == "BLOCKED") {
-            holder.tvAction.text = "BLOCKED"
-            holder.tvAction.setTextColor(Color.parseColor("#F85149"))
-            holder.tvAction.setBackgroundColor(Color.parseColor("#1AF85149"))
-        } else {
-            holder.tvAction.text = "DISMISSED"
-            holder.tvAction.setTextColor(Color.parseColor("#D29922"))
-            holder.tvAction.setBackgroundColor(Color.parseColor("#1AD29922"))
+        // Style based on action type
+        when (event.action) {
+            "BLOCKED" -> {
+                holder.tvAction.text = "BLOCKED"
+                holder.tvAction.setTextColor(0xFFEF4444.toInt())
+                holder.tvAction.setBackgroundResource(R.drawable.bg_badge_blocked)
+                holder.riskCircle.setBackgroundResource(R.drawable.risk_badge_bg)
+            }
+            "SAFE" -> {
+                holder.tvAction.text = "SAFE"
+                holder.tvAction.setTextColor(0xFF4ADE80.toInt())
+                holder.tvAction.setBackgroundResource(R.drawable.bg_badge_safe)
+                holder.riskCircle.setBackgroundResource(R.drawable.risk_badge_safe_bg)
+            }
+            else -> {
+                holder.tvAction.text = "DISMISSED"
+                holder.tvAction.setTextColor(0xFFFBBF24.toInt())
+                holder.tvAction.setBackgroundResource(R.drawable.bg_badge_dismissed)
+                holder.riskCircle.setBackgroundResource(R.drawable.risk_badge_bg)
+            }
         }
     }
 

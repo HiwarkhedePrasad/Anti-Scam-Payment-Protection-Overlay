@@ -74,19 +74,54 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateButtons() {
         val ov = hasOverlayPermission()
-        btnOverlay.text = if (ov) "✅ Overlay Granted" else getString(R.string.enable_overlay_button)
-        btnOverlay.isEnabled = !ov
+        if (ov) {
+            btnOverlay.text = "✅  Overlay Granted"
+            btnOverlay.isEnabled = false
+            btnOverlay.setTextColor(getColor(R.color.text_muted))
+            btnOverlay.alpha = 0.5f
+        } else {
+            btnOverlay.text = getString(R.string.enable_overlay_button)
+            btnOverlay.isEnabled = true
+            btnOverlay.setTextColor(getColor(R.color.accent_red))
+            btnOverlay.alpha = 1.0f
+        }
 
         val sv = isServiceEnabled()
-        btnAccessibility.text = if (sv) "✅ Service Active" else getString(R.string.enable_service_button)
-        btnAccessibility.isEnabled = !sv
+        if (sv) {
+            btnAccessibility.text = "✅  Service Active"
+            btnAccessibility.isEnabled = false
+            btnAccessibility.setTextColor(getColor(R.color.text_muted))
+            btnAccessibility.alpha = 0.5f
+        } else {
+            btnAccessibility.text = getString(R.string.enable_service_button)
+            btnAccessibility.isEnabled = true
+            btnAccessibility.setTextColor(getColor(R.color.accent_blue))
+            btnAccessibility.alpha = 1.0f
+        }
 
         val bt = isBatteryOptIgnored()
-        btnBattery.text = if (bt) "✅ Battery Opt Disabled" else "Disable Battery Optimization"
-        btnBattery.isEnabled = !bt
+        if (bt) {
+            btnBattery.text = "✅  Battery Optimized"
+            btnBattery.isEnabled = false
+            btnBattery.setTextColor(getColor(R.color.text_muted))
+            btnBattery.alpha = 0.5f
+        } else {
+            btnBattery.text = "Disable Battery Optimization"
+            btnBattery.isEnabled = true
+            btnBattery.setTextColor(getColor(R.color.accent_amber))
+            btnBattery.alpha = 1.0f
+        }
 
-        tvStatus.text = if (sv) "● ML Model Active" else "○ Service Inactive"
-        tvStatus.setTextColor(if (sv) 0xFF3FB950.toInt() else 0xFFF85149.toInt())
+        // Status chip
+        if (sv) {
+            tvStatus.text = "●  ML Model Active"
+            tvStatus.setTextColor(getColor(R.color.accent_green))
+            tvStatus.setBackgroundResource(R.drawable.bg_status_active)
+        } else {
+            tvStatus.text = "○  Service Inactive"
+            tvStatus.setTextColor(getColor(R.color.accent_red))
+            tvStatus.setBackgroundResource(R.drawable.bg_status_inactive)
+        }
     }
 
     private fun loadStats() {
@@ -101,7 +136,12 @@ class MainActivity : AppCompatActivity() {
                 tvStatBlocked.text = "$blocked"
                 tvStatTotal.text = "$total"
                 tvStatRisk.text = "${"%.0f".format(avgRisk)}%"
-                tvNoHistory.text = if (events.isEmpty()) "No threats yet" else "${events.size} events"
+
+                if (events.isEmpty()) {
+                    tvNoHistory.text = "No events yet"
+                } else {
+                    tvNoHistory.text = "${events.size} events"
+                }
 
                 rvHistory.adapter = ScamEventAdapter(events)
             }

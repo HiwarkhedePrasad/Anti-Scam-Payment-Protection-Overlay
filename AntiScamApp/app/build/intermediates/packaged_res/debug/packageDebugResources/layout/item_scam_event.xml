@@ -1,77 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardBackgroundColor="#161B22"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="0dp">
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="14dp"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="4dp"
+    android:background="@drawable/bg_card">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+    <!-- Risk Score Circle -->
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="14dp">
 
-        <!-- Risk badge -->
+        <View
+            android:id="@+id/risk_badge_circle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/risk_badge_bg" />
+
         <TextView
             android:id="@+id/tv_item_risk"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/risk_badge_bg"
-            android:layout_marginEnd="12dp" />
+            android:textStyle="bold" />
+    </FrameLayout>
 
-        <!-- Details -->
+    <!-- Details Column -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- App Name + Action Badge Row -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="3dp">
 
             <TextView
                 android:id="@+id/tv_item_app"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="#C9D1D9"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end" />
 
             <TextView
-                android:id="@+id/tv_item_snippet"
+                android:id="@+id/tv_item_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#484F58"
-                android:textSize="11sp"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:layout_marginTop="2dp" />
-
-            <TextView
-                android:id="@+id/tv_item_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#484F58"
                 android:textSize="10sp"
-                android:layout_marginTop="4dp" />
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <!-- Action badge -->
+        <!-- Snippet -->
         <TextView
-            android:id="@+id/tv_item_action"
+            android:id="@+id/tv_item_snippet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp" />
-    </LinearLayout>
+            android:textColor="@color/text_tertiary"
+            android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp" />
 
-</androidx.cardview.widget.CardView>
+        <!-- Timestamp -->
+        <TextView
+            android:id="@+id/tv_item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_muted"
+            android:textSize="11sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+</LinearLayout>

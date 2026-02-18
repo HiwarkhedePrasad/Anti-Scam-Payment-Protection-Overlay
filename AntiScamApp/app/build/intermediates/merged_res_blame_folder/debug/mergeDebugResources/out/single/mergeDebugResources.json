@@ -1,27 +1,27 @@
 [
     {
-        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\xml_accessibility_service_config.xml.flat",
-        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\xml\\accessibility_service_config.xml"
-    },
-    {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_overlay_safe.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\overlay_safe.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_badge_safe.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_badge_safe.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_btn_warning.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_btn_warning.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_badge_dismissed.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_badge_dismissed.xml"
     },
     {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_overlay_scam.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\overlay_scam.xml"
     },
     {
-        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_overlay_layout.xml.flat",
-        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\overlay_layout.xml"
-    },
-    {
-        "merged": "com.example.antiscam.app-debug-36:/layout_overlay_scam.xml.flat",
-        "source": "com.example.antiscam.app-main-38:/layout/overlay_scam.xml"
-    },
-    {
-        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_status_active.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_status_active.xml"
     },
     {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_item_scam_event.xml.flat",
@@ -32,8 +32,60 @@
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\xml\\data_extraction_rules.xml"
     },
     {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_btn_primary.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_btn_primary.xml"
+    },
+    {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\drawable_risk_badge_bg.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\drawable\\risk_badge_bg.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_risk_badge_safe_bg.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/risk_badge_safe_bg.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_card_elevated.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_card_elevated.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_card.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_card.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_badge_blocked.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_badge_blocked.xml"
+    },
+    {
+        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\xml_accessibility_service_config.xml.flat",
+        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\xml\\accessibility_service_config.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/layout_item_scam_event.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/layout/item_scam_event.xml"
+    },
+    {
+        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_overlay_layout.xml.flat",
+        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\overlay_layout.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_btn_success.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_btn_success.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_risk_badge_bg.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/risk_badge_bg.xml"
+    },
+    {
+        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_btn_disabled.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_btn_disabled.xml"
+    },
+    {
+        "merged": "com.example.antiscam.app-debug-36:/drawable_bg_status_inactive.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/drawable/bg_status_inactive.xml"
     },
     {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\xml_backup_rules.xml.flat",
@@ -44,11 +96,15 @@
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\drawable\\ic_launcher_foreground.xml"
     },
     {
+        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\activity_main.xml"
+    },
+    {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
-        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-36:\\layout_activity_main.xml.flat",
-        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-38:\\layout\\activity_main.xml"
+        "merged": "com.example.antiscam.app-debug-36:/layout_activity_main.xml.flat",
+        "source": "com.example.antiscam.app-main-38:/layout/activity_main.xml"
     }
 ]

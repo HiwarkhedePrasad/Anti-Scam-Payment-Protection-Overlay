@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="http://schemas.android.com/tools">
+    <color name="accent_amber">#FFFBBF24</color>
+    <color name="accent_amber_dim">#33FBBF24</color>
+    <color name="accent_blue">#FF6C9EFF</color>
+    <color name="accent_blue_dim">#33668FFF</color>
+    <color name="accent_green">#FF4ADE80</color>
+    <color name="accent_green_dim">#334ADE80</color>
+    <color name="accent_purple">#FFA78BFA</color>
+    <color name="accent_purple_dim">#33A78BFA</color>
+    <color name="accent_red">#FFEF4444</color>
+    <color name="accent_red_dim">#33EF4444</color>
+    <color name="bg_card">#FF1A1A24</color>
+    <color name="bg_card_elevated">#FF22222E</color>
+    <color name="bg_primary">#FF0F0F14</color>
+    <color name="bg_surface">#FF15151E</color>
     <color name="black">#FF000000</color>
+    <color name="btn_disabled">#FF334155</color>
+    <color name="btn_disabled_text">#FF64748B</color>
+    <color name="btn_primary">#FF6C9EFF</color>
+    <color name="btn_success">#FF4ADE80</color>
+    <color name="btn_warning">#FFFBBF24</color>
+    <color name="divider">#FF1E293B</color>
     <color name="green_safe">#FF388E3C</color>
     <color name="green_safe_overlay">#CC00C853</color>
-    <color name="red_dark">#FFB71C1C</color>
+    <color name="red_dark">#FF0F0F14</color>
     <color name="red_warning">#CCFF0000</color>
     <color name="red_warning_solid">#FFD32F2F</color>
+    <color name="text_muted">#FF475569</color>
+    <color name="text_primary">#FFF1F5F9</color>
+    <color name="text_secondary">#FF94A3B8</color>
+    <color name="text_tertiary">#FF64748B</color>
     <color name="white">#FFFFFFFF</color>
     <string name="accessibility_service_description">Monitors UPI payment apps (PhonePe, GPay, Paytm) for scam patterns and blocks fraudulent PIN requests.</string>
     <string name="app_name">AntiScam Guard</string>
@@ -16,11 +40,14 @@
     <string name="service_enabled">✅ Service Active</string>
     <string name="setup_instructions">Grant both permissions below to activate scam protection for PhonePe, GPay, and Paytm.</string>
     <style name="Theme.AntiScamApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/red_warning_solid</item>
-        <item name="colorPrimaryVariant">@color/red_dark</item>
+        <item name="colorPrimary">@color/accent_blue</item>
+        <item name="colorPrimaryVariant">@color/bg_primary</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/green_safe</item>
+        <item name="colorSecondary">@color/accent_green</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor" ns1:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:statusBarColor" ns1:targetApi="l">@color/bg_primary</item>
+        <item name="android:navigationBarColor" ns1:targetApi="l">@color/bg_primary</item>
+        <item name="android:windowLightStatusBar" ns1:targetApi="m">false</item>
     </style>
 </resources>

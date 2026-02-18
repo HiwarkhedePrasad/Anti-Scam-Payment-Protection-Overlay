@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-53:12
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-59:12
+INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-59:12
+INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-59:12
+INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:2:1-59:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\023b4f0aeac7e625f04c769d0e87dec8\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\phiwa\.gradle\caches\8.12\transforms\fe1621294d573c3d37c6be9f69f8a5da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\870b8263df8f64a451752673e86f9d0d\transformed\jetified-appcompat-resources-1.7.0\AndroidManifest.xml:2:1-7:12
@@ -63,31 +63,43 @@ uses-permission#android.permission.FOREGROUND_SERVICE
 ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:7:5-77
 	android:name
 		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:7:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_SPECIAL_USE
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:8:5-89
+	android:name
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:8:22-86
 uses-permission#android.permission.VIBRATE
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:8:5-66
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:9:5-66
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:8:22-63
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:9:22-63
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:10:5-77
+	android:name
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:10:22-74
+uses-permission#android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:11:5-95
+	android:name
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:11:22-92
 queries
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:11:5-16:15
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:14:5-19:15
 package#com.phonepe.app
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:12:9-51
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:15:9-51
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:12:18-48
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:15:18-48
 package#com.google.android.apps.nbu.paisa.user
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:13:9-74
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:16:9-74
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:13:18-71
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:16:18-71
 package#net.one97.paytm
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:14:9-51
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:17:9-51
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:14:18-48
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:17:18-48
 package#in.org.npci.upiapp
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:15:9-54
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:18:9-54
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:15:18-51
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:18:18-51
 application
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:18:5-51:19
-INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:18:5-51:19
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:21:5-57:19
+INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:21:5-57:19
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\023b4f0aeac7e625f04c769d0e87dec8\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\023b4f0aeac7e625f04c769d0e87dec8\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\phiwa\.gradle\caches\8.12\transforms\fe1621294d573c3d37c6be9f69f8a5da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -109,59 +121,67 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\phiwa\.gradle\cach
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] C:\Users\phiwa\.gradle\caches\8.12\transforms\ab1322187b252293f308e6f312ba67c7\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:25:9-35
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:28:9-35
 	android:label
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:23:9-41
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:26:9-41
 	android:fullBackupContent
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:21:9-54
-	android:roundIcon
 		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:24:9-54
+	android:roundIcon
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:27:9-54
 	tools:targetApi
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:27:9-29
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:30:9-29
 	android:icon
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:22:9-43
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:25:9-43
 	android:allowBackup
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:19:9-35
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:22:9-35
 	android:theme
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:26:9-49
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:29:9-49
 	android:dataExtractionRules
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:20:9-65
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:23:9-65
 service#com.example.antiscam.ScamDetectorService
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:29:9-39:19
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:32:9-46:19
 	android:exported
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:32:13-36
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:35:13-36
 	android:permission
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:31:13-79
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:34:13-79
+	android:foregroundServiceType
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:36:13-55
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:30:13-48
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:33:13-48
 intent-filter#action:name:android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:33:13-35:29
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:37:13-39:29
 action#android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:34:17-92
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:38:17-92
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:34:25-89
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:38:25-89
 meta-data#android.accessibilityservice
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:36:13-38:72
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:40:13-42:72
 	android:resource
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:38:17-69
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:42:17-69
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:37:17-60
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:41:17-60
+property#android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:43:13-45:51
+	android:value
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:45:17-48
+	android:name
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:44:17-76
 activity#com.example.antiscam.MainActivity
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:41:9-49:20
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:48:9-55:20
 	android:exported
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:43:13-36
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:50:13-36
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:42:13-41
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:49:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:44:13-48:29
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:51:13-54:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:46:17-69
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:52:17-69
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:46:25-66
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:52:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:47:17-77
+ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:53:17-77
 	android:name
-		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:47:27-74
+		ADDED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml:53:27-74
 uses-sdk
 INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml

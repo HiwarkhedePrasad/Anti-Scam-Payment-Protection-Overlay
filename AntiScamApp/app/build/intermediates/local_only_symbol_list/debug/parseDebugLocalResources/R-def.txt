@@ -8,10 +8,10 @@ color red_warning
 color red_warning_solid
 color white
 drawable ic_launcher_foreground
+id btn_battery_opt
 id btn_enable_accessibility
 id btn_enable_overlay
 id tv_countdown
-id tv_instructions
 layout activity_main
 layout overlay_layout
 layout overlay_safe

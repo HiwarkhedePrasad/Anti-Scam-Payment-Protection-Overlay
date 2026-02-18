@@ -23,30 +23,41 @@
         android:layout_marginBottom="8dp" />
 
     <TextView
-        android:id="@+id/tv_instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/setup_instructions"
+        android:text="Grant all 3 permissions below to activate protection"
         android:textColor="#AAAAAA"
         android:textSize="14sp"
         android:gravity="center"
         android:layout_marginBottom="40dp" />
 
+    <!-- Step 1: Overlay -->
     <Button
         android:id="@+id/btn_enable_overlay"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="@string/enable_overlay_button"
         android:textSize="15sp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="#D32F2F" />
 
+    <!-- Step 2: Accessibility -->
     <Button
         android:id="@+id/btn_enable_accessibility"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="@string/enable_service_button"
         android:textSize="15sp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="#1565C0" />
+
+    <!-- Step 3: Battery optimization — CRITICAL for working without USB -->
+    <Button
+        android:id="@+id/btn_battery_opt"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Disable Battery Optimization"
+        android:textSize="15sp"
+        android:backgroundTint="#2E7D32" />
 
 </LinearLayout>

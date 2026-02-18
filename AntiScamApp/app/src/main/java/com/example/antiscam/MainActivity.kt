@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var btnEnableOverlay: Button
     private lateinit var btnEnableAccessibility: Button
+    private lateinit var btnBatteryOpt: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,21 +23,20 @@ class MainActivity : AppCompatActivity() {
 
         btnEnableOverlay = findViewById(R.id.btn_enable_overlay)
         btnEnableAccessibility = findViewById(R.id.btn_enable_accessibility)
+        btnBatteryOpt = findViewById(R.id.btn_battery_opt)
 
         btnEnableOverlay.setOnClickListener {
-            if (!hasOverlayPermission()) {
-                requestOverlayPermission()
-            } else {
-                Toast.makeText(this, "Overlay permission already granted ✅", Toast.LENGTH_SHORT).show()
-            }
+            if (!hasOverlayPermission()) requestOverlayPermission()
+            else Toast.makeText(this, "Overlay permission already granted ✅", Toast.LENGTH_SHORT).show()
         }
 
         btnEnableAccessibility.setOnClickListener {
-            if (!isScamServiceEnabled()) {
-                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-            } else {
-                Toast.makeText(this, "Accessibility service already active ✅", Toast.LENGTH_SHORT).show()
-            }
+            if (!isScamServiceEnabled()) startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            else Toast.makeText(this, "Accessibility service already active ✅", Toast.LENGTH_SHORT).show()
+        }
+
+        btnBatteryOpt.setOnClickListener {
+            requestBatteryOptimizationExemption()
         }
     }
 
@@ -52,6 +53,10 @@ class MainActivity : AppCompatActivity() {
         val serviceOk = isScamServiceEnabled()
         btnEnableAccessibility.text = if (serviceOk) getString(R.string.service_enabled) else getString(R.string.enable_service_button)
         btnEnableAccessibility.isEnabled = !serviceOk
+
+        val batteryOk = isBatteryOptimizationIgnored()
+        btnBatteryOpt.text = if (batteryOk) "✅ Battery Optimization Disabled" else "Disable Battery Optimization"
+        btnBatteryOpt.isEnabled = !batteryOk
     }
 
     private fun hasOverlayPermission(): Boolean =
@@ -63,18 +68,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isBatteryOptimizationIgnored(): Boolean {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        return pm.isIgnoringBatteryOptimizations(packageName)
+    }
+
+    private fun requestBatteryOptimizationExemption() {
+        if (!isBatteryOptimizationIgnored()) {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                data = Uri.parse("package:$packageName")
+            }
+            startActivity(intent)
+        }
+    }
+
     private fun isScamServiceEnabled(): Boolean {
         val enabledServices = Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+            contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         ) ?: return false
-
         val target = "$packageName/${ScamDetectorService::class.java.canonicalName}"
         val targetShort = "$packageName/.${ScamDetectorService::class.java.simpleName}"
-
-        return enabledServices.split(":").any { component ->
-            component.equals(target, ignoreCase = true) ||
-                    component.equals(targetShort, ignoreCase = true)
-        }
+        return enabledServices.split(":").any { it.equals(target, ignoreCase = true) || it.equals(targetShort, ignoreCase = true) }
     }
 }

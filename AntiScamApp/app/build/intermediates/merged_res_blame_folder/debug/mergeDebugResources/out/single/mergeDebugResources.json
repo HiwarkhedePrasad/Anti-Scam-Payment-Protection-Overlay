@@ -4,18 +4,6 @@
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\layout\\overlay_layout.xml"
     },
     {
-        "merged": "com.example.antiscam.app-debug-31:/layout_overlay_layout.xml.flat",
-        "source": "com.example.antiscam.app-main-33:/layout/overlay_layout.xml"
-    },
-    {
-        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
-    },
-    {
-        "merged": "com.example.antiscam.app-debug-31:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.example.antiscam.app-main-33:/drawable/ic_launcher_foreground.xml"
-    },
-    {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\xml_data_extraction_rules.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\xml\\data_extraction_rules.xml"
     },
@@ -28,12 +16,20 @@
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\drawable\\ic_launcher_foreground.xml"
     },
     {
+        "merged": "com.example.antiscam.app-debug-31:/layout_overlay_scam.xml.flat",
+        "source": "com.example.antiscam.app-main-33:/layout/overlay_scam.xml"
+    },
+    {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\layout_overlay_safe.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\layout\\overlay_safe.xml"
     },
     {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\xml_backup_rules.xml.flat",
         "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-main-33:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
         "merged": "C:\\Users\\phiwa\\.gradle\\daemon\\8.12\\com.example.antiscam.app-debug-31:\\layout_activity_main.xml.flat",

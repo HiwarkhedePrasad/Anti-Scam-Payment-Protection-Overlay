@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FR-05: Full-screen overlay that BLOCKS all touch input.
-     The service sets no FLAG_NOT_TOUCHABLE, so this view consumes every touch.
-     FR-06: Long-press (3 seconds) to dismiss — set up in ScamDetectorService. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/red_warning"
-    android:clickable="true"
-    android:focusable="true"
-    android:keepScreenOn="true">
+    android:clickable="false"
+    android:focusable="false">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
         android:gravity="center"
         android:padding="32dp">
 
-        <!-- Shield icon -->
-        <ImageView
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ic_launcher_foreground"
-            android:layout_marginBottom="24dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚠️"
+            android:textSize="72sp"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⚠️ SCAM DETECTED!"
+            android:text="SCAM DETECTED!"
             android:textColor="@color/white"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,15 +38,20 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="48dp" />
 
+        <!-- Countdown label — updated live by ScamDetectorService -->
         <TextView
+            android:id="@+id/tv_countdown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hold for 3 seconds to dismiss"
-            android:textColor="#CCFFFFFF"
-            android:textSize="13sp"
-            android:gravity="center" />
+            android:text="Hold anywhere to dismiss"
+            android:textColor="#DDFFFFFF"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:background="#33FFFFFF"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

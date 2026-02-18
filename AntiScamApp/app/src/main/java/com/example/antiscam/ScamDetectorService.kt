@@ -6,326 +6,290 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.TextView
 import java.util.Locale
 
 class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener {
 
     companion object {
         private const val TAG = "ScamDetector"
-
-        // ── FR-02: Package filter ──────────────────────────────────────────────
-        // Set to TRUE to monitor ALL apps (recommended for hackathon demo).
-        // Set to FALSE to restrict to UPI apps only (production mode).
         private const val MONITOR_ALL_APPS = true
+        private const val HOLD_MS = 2000L          // hold duration to dismiss
+        private const val COOLDOWN_MS = 20_000L    // suppress re-detection after dismiss (20s)
 
         private val MONITORED_PACKAGES = setOf(
-            "com.phonepe.app",
-            "com.phonepe.app.preprod",
-            "com.google.android.apps.nbu.paisa.user",   // Google Pay
-            "net.one97.paytm",
-            "in.org.npci.upiapp",                        // BHIM
-            "com.amazon.mShop.android.shopping",         // Amazon Pay
-            "com.mobikwik_new",
-            "com.freecharge.android",
-            "com.axis.mobile",
-            "com.sbi.lotusintouch",
-            "com.dreamplug.androidapp",                  // CRED
-            "com.whatsapp",                              // WhatsApp Pay
+            "com.phonepe.app", "com.phonepe.app.preprod",
+            "com.google.android.apps.nbu.paisa.user",
+            "net.one97.paytm", "in.org.npci.upiapp",
+            "com.amazon.mShop.android.shopping",
+            "com.mobikwik_new", "com.freecharge.android", "com.whatsapp",
         )
 
-        // ── Scam detection keywords ───────────────────────────────────────────
-        // A scam is detected when ANY keyword from GROUP_A appears together
-        // with ANY keyword from GROUP_B on the same screen.
-        private val SCAM_KEYWORDS_GROUP_A = listOf(
-            "request from",
-            "collect request",
-            "payment request",
-            "requesting money",
-            "pay to",
-        )
-        private val SCAM_KEYWORDS_GROUP_B = listOf(
-            "enter upi pin",
-            "enter pin",
-            "upi pin",
-            "confirm with pin",
-            "authenticate",
-        )
-
-        // ── Safe transaction keywords (FR-07/08) ──────────────────────────────
-        private val SAFE_KEYWORDS_A = listOf("paying", "pay to", "sending")
-        private val SAFE_KEYWORDS_B = listOf("₹", "rs.", "inr")
+        private val SCAM_A = listOf("request from", "collect request", "payment request", "requesting money")
+        private val SCAM_B = listOf("enter upi pin", "enter pin", "upi pin", "confirm with pin", "authenticate")
+        private val SAFE_A = listOf("paying", "pay to", "sending")
+        private val SAFE_B = listOf("₹", "rs.", "inr")
     }
 
-    private var windowManager: WindowManager? = null
-    private var redOverlayView: View? = null
-    private var greenOverlayView: View? = null
-    private var isRedOverlayShown = false
-    private var isGreenOverlayShown = false
+    private var wm: WindowManager? = null
+    private var redView: View? = null
+    private var greenView: View? = null
+    private var redShown = false
+    private var greenShown = false
 
     private var tts: TextToSpeech? = null
-    private var isTtsReady = false
+    private var ttsReady = false
 
     private val handler = Handler(Looper.getMainLooper())
+    private var dismissRunnable: Runnable? = null
+    private var dismissedAt = 0L
+
+    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        wm = getSystemService(WINDOW_SERVICE) as WindowManager
         tts = TextToSpeech(this, this)
-        Log.i(TAG, "✅ ScamDetectorService connected. MONITOR_ALL_APPS=$MONITOR_ALL_APPS")
+        Log.i(TAG, "Service connected")
     }
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts?.setLanguage(Locale.ENGLISH)
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.w(TAG, "TTS language not supported, using default")
-            }
-            isTtsReady = true
-            Log.i(TAG, "✅ TTS initialized")
-        } else {
-            Log.e(TAG, "❌ TTS init failed")
+            tts?.setLanguage(Locale.ENGLISH)
+            ttsReady = true
         }
     }
+
+    override fun onInterrupt() { removeAll() }
+    override fun onDestroy() { super.onDestroy(); removeAll(); tts?.shutdown() }
+
+    // ─── Event Handling ───────────────────────────────────────────────────────
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
-
-        val packageName = event.packageName?.toString() ?: return
-
-        // Skip our own app to avoid feedback loops
-        if (packageName == "com.example.antiscam") return
-
-        // FR-02: Package filter (bypassed in demo mode)
-        if (!MONITOR_ALL_APPS && packageName !in MONITORED_PACKAGES) return
-
+        val pkg = event.packageName?.toString() ?: return
+        if (pkg == "com.example.antiscam") return
+        if (!MONITOR_ALL_APPS && pkg !in MONITORED_PACKAGES) return
         if (event.eventType != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
-            event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
-        ) return
+            event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
 
-        val rootNode = rootInActiveWindow ?: return
-        val screenContent = extractAllText(rootNode).lowercase()
+        // Cooldown: don't re-detect right after user dismissed
+        if (SystemClock.elapsedRealtime() - dismissedAt < COOLDOWN_MS) return
 
-        // Log every scan so we can debug via logcat
-        if (screenContent.isNotBlank()) {
-            Log.d(TAG, "[$packageName] Scanned: ${screenContent.take(300)}")
-        }
+        val text = extractText(rootInActiveWindow).lowercase()
+        if (text.isBlank()) return
+        Log.d(TAG, "[$pkg] ${text.take(200)}")
 
         when {
-            isScamDetected(screenContent) -> {
-                Log.w(TAG, "🚨 SCAM DETECTED in $packageName!")
-                hideGreenOverlay()
-                showRedOverlay()
-            }
-            isSafeTransaction(screenContent) && !isRedOverlayShown -> {
-                showGreenOverlay()
-            }
-            else -> {
-                // If we navigated away from the scam screen, hide green overlay.
-                // Keep red overlay up until user long-presses to dismiss.
-                if (!isRedOverlayShown) hideGreenOverlay()
-            }
+            isScam(text) -> { hideGreen(); showRed() }
+            isSafe(text) && !redShown -> showGreen()
+            else -> if (!redShown) hideGreen()
         }
     }
 
-    // ─── Detection Logic ──────────────────────────────────────────────────────
+    private fun isScam(t: String) = SCAM_A.any { t.contains(it) } && SCAM_B.any { t.contains(it) }
+    private fun isSafe(t: String) = SAFE_A.any { t.contains(it) } && SAFE_B.any { t.contains(it) }
 
-    private fun isScamDetected(content: String): Boolean {
-        val hasGroupA = SCAM_KEYWORDS_GROUP_A.any { content.contains(it) }
-        val hasGroupB = SCAM_KEYWORDS_GROUP_B.any { content.contains(it) }
-        if (hasGroupA && hasGroupB) {
-            Log.w(TAG, "Scam match — GroupA: ${SCAM_KEYWORDS_GROUP_A.filter { content.contains(it) }}, GroupB: ${SCAM_KEYWORDS_GROUP_B.filter { content.contains(it) }}")
-        }
-        return hasGroupA && hasGroupB
-    }
-
-    private fun isSafeTransaction(content: String): Boolean {
-        val hasA = SAFE_KEYWORDS_A.any { content.contains(it) }
-        val hasB = SAFE_KEYWORDS_B.any { content.contains(it) }
-        return hasA && hasB
-    }
-
-    private fun extractAllText(node: AccessibilityNodeInfo?): String {
+    private fun extractText(node: AccessibilityNodeInfo?): String {
         if (node == null) return ""
         val sb = StringBuilder()
-        traverseNode(node, sb)
+        fun walk(n: AccessibilityNodeInfo?) {
+            if (n == null) return
+            n.text?.let { sb.append(it).append(' ') }
+            n.contentDescription?.let { sb.append(it).append(' ') }
+            n.hintText?.let { sb.append(it).append(' ') }
+            for (i in 0 until n.childCount) walk(n.getChild(i))
+        }
+        walk(node)
         return sb.toString()
     }
 
-    private fun traverseNode(node: AccessibilityNodeInfo?, sb: StringBuilder) {
-        if (node == null) return
-        node.text?.let { sb.append(it).append(" ") }
-        node.contentDescription?.let { sb.append(it).append(" ") }
-        node.hintText?.let { sb.append(it).append(" ") }
-        for (i in 0 until node.childCount) {
-            traverseNode(node.getChild(i), sb)
-        }
-    }
+    // ─── Red Overlay ──────────────────────────────────────────────────────────
 
-    // ─── Red (Scam) Overlay ───────────────────────────────────────────────────
-
-    private fun showRedOverlay() {
-        if (isRedOverlayShown) return
+    private fun showRed() {
+        if (redShown) return
         handler.post {
             try {
-                val params = buildOverlayParams()
-                redOverlayView = LayoutInflater.from(this).inflate(R.layout.overlay_scam, null)
-                setupLongPressDismiss(redOverlayView!!) { hideRedOverlay() }
-                windowManager?.addView(redOverlayView, params)
-                isRedOverlayShown = true
-                triggerScamAlert()
+                val view = LayoutInflater.from(this).inflate(R.layout.overlay_scam, null)
+                val tvCountdown = view.findViewById<TextView>(R.id.tv_countdown)
+
+                // Attach hold-to-dismiss to the ROOT view — no Button needed
+                attachHoldToDismiss(view, tvCountdown)
+
+                wm?.addView(view, overlayParams())
+                redView = view
+                redShown = true
+                scamAlert()
+                Log.i(TAG, "Red overlay shown")
             } catch (e: Exception) {
-                Log.e(TAG, "Error showing red overlay", e)
+                Log.e(TAG, "showRed error", e)
             }
         }
     }
 
-    private fun hideRedOverlay() {
-        if (!isRedOverlayShown) return
+    private fun hideRed() {
+        if (!redShown) return
+        handler.post { removeRedNow() }
+    }
+
+    // Called directly from dismissRunnable (already on main thread) — no handler.post needed
+    private fun removeRedNow() {
+        try {
+            dismissRunnable?.let { handler.removeCallbacks(it) }
+            dismissRunnable = null
+            if (redView != null) {
+                wm?.removeView(redView)
+                redView = null
+            }
+            redShown = false
+            dismissedAt = SystemClock.elapsedRealtime()
+            Log.i(TAG, "Red overlay removed — 20s cooldown started")
+        } catch (e: Exception) {
+            Log.e(TAG, "removeRedNow error", e)
+        }
+    }
+
+    // ─── Green Overlay ────────────────────────────────────────────────────────
+
+    private fun showGreen() {
+        if (greenShown) return
         handler.post {
             try {
-                windowManager?.removeView(redOverlayView)
-                redOverlayView = null
-                isRedOverlayShown = false
-                Log.i(TAG, "Red overlay dismissed")
+                val view = LayoutInflater.from(this).inflate(R.layout.overlay_safe, null)
+                wm?.addView(view, overlayParams())
+                greenView = view
+                greenShown = true
+                safeAlert()
+                handler.postDelayed({ hideGreen() }, 4000L)
             } catch (e: Exception) {
-                Log.e(TAG, "Error hiding red overlay", e)
+                Log.e(TAG, "showGreen error", e)
             }
         }
     }
 
-    // ─── Green (Safe) Overlay ─────────────────────────────────────────────────
-
-    private fun showGreenOverlay() {
-        if (isGreenOverlayShown) return
+    private fun hideGreen() {
+        if (!greenShown) return
         handler.post {
             try {
-                val params = buildOverlayParams()
-                greenOverlayView = LayoutInflater.from(this).inflate(R.layout.overlay_safe, null)
-                windowManager?.addView(greenOverlayView, params)
-                isGreenOverlayShown = true
-                triggerSafeAlert()
-                handler.postDelayed({ hideGreenOverlay() }, 4000L)
+                wm?.removeView(greenView)
+                greenView = null
+                greenShown = false
             } catch (e: Exception) {
-                Log.e(TAG, "Error showing green overlay", e)
+                Log.e(TAG, "hideGreen error", e)
             }
         }
     }
 
-    private fun hideGreenOverlay() {
-        if (!isGreenOverlayShown) return
-        handler.post {
-            try {
-                windowManager?.removeView(greenOverlayView)
-                greenOverlayView = null
-                isGreenOverlayShown = false
-            } catch (e: Exception) {
-                Log.e(TAG, "Error hiding green overlay", e)
+    private fun removeAll() { hideRed(); hideGreen() }
+
+    // ─── Hold-to-Dismiss ──────────────────────────────────────────────────────
+    // Attached to the ROOT view. No Button involved — avoids all touch dispatch issues.
+    // ACTION_DOWN → start HOLD_MS timer → fires hideRed()
+    // ACTION_UP / CANCEL → cancel timer, reset label
+
+    private fun attachHoldToDismiss(rootView: View, tvCountdown: TextView?) {
+        var tickRunnable: Runnable? = null
+
+        rootView.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    Log.d(TAG, "Touch DOWN — starting hold timer")
+                    var remaining = (HOLD_MS / 1000).toInt()
+                    tvCountdown?.text = "Hold $remaining..."
+
+                    // Tick every second to update label
+                    tickRunnable = object : Runnable {
+                        override fun run() {
+                            remaining--
+                            if (remaining > 0) {
+                                tvCountdown?.text = "Hold $remaining..."
+                                handler.postDelayed(this, 1000L)
+                            }
+                        }
+                    }
+                    handler.postDelayed(tickRunnable!!, 1000L)
+
+                    // Fire dismiss after HOLD_MS — runs on main thread, call removeRedNow() directly
+                    dismissRunnable = Runnable {
+                        Log.i(TAG, "Hold complete — dismissing")
+                        tickRunnable?.let { handler.removeCallbacks(it) }
+                        removeRedNow()
+                    }
+                    handler.postDelayed(dismissRunnable!!, HOLD_MS)
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    Log.d(TAG, "Touch UP/CANCEL — cancelling hold")
+                    tickRunnable?.let { handler.removeCallbacks(it) }
+                    dismissRunnable?.let { handler.removeCallbacks(it) }
+                    dismissRunnable = null
+                    tvCountdown?.text = "Hold anywhere to dismiss"
+                    true
+                }
+                else -> true
             }
         }
     }
 
     // ─── WindowManager Params ─────────────────────────────────────────────────
 
-    private fun buildOverlayParams(): WindowManager.LayoutParams {
+    private fun overlayParams(): WindowManager.LayoutParams {
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+        else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
 
-        // CRITICAL: Do NOT add FLAG_NOT_TOUCHABLE or FLAG_NOT_FOCUSABLE.
-        // Without those flags, the overlay intercepts and consumes ALL touch events.
-        // FLAG_LAYOUT_IN_SCREEN ensures it covers the full screen including status bar.
-        val flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+        // FLAG_NOT_TOUCH_MODAL: system nav (Home/Back) still works — device can't freeze
+        // No FLAG_NOT_TOUCHABLE: overlay consumes touches within its bounds
+        val flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
         return WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            type,
-            flags,
-            PixelFormat.TRANSLUCENT
+            type, flags, PixelFormat.TRANSLUCENT
         )
     }
 
-    // ─── FR-06: Long-Press Dismiss (3 seconds) ────────────────────────────────
+    // ─── Alerts ───────────────────────────────────────────────────────────────
 
-    private fun setupLongPressDismiss(view: View, onDismiss: () -> Unit) {
-        val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onLongPress(e: MotionEvent) {
-                Log.i(TAG, "Long press — dismissing overlay")
-                onDismiss()
-            }
-        })
-        view.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            true // consume ALL touches
-        }
-    }
-
-    // ─── FR-09: TTS + FR-10: Vibration ───────────────────────────────────────
-
-    private fun triggerScamAlert() {
+    private fun scamAlert() {
         vibrate(longArrayOf(0, 300, 200, 300, 200, 600))
-        if (isTtsReady) {
-            tts?.speak(
-                "Warning! Scam detected. Do not enter your U P I PIN. This is a fraud request.",
-                TextToSpeech.QUEUE_FLUSH, null, "SCAM_ALERT"
-            )
-        }
+        if (ttsReady) tts?.speak(
+            "Warning! Scam detected. Do not enter your U P I PIN.",
+            TextToSpeech.QUEUE_FLUSH, null, "SCAM"
+        )
     }
 
-    private fun triggerSafeAlert() {
+    private fun safeAlert() {
         vibrate(longArrayOf(0, 100))
-        if (isTtsReady) {
-            tts?.speak("Transaction looks safe.", TextToSpeech.QUEUE_FLUSH, null, "SAFE_ALERT")
-        }
+        if (ttsReady) tts?.speak("Transaction looks safe.", TextToSpeech.QUEUE_FLUSH, null, "SAFE")
     }
 
     private fun vibrate(pattern: LongArray) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val vm = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                vm.defaultVibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+                (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager)
+                    .defaultVibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
             } else {
                 @Suppress("DEPRECATION")
                 val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     v.vibrate(VibrationEffect.createWaveform(pattern, -1))
-                } else {
-                    @Suppress("DEPRECATION")
-                    v.vibrate(pattern, -1)
-                }
+                else @Suppress("DEPRECATION") v.vibrate(pattern, -1)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Vibration error", e)
-        }
-    }
-
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
-
-    override fun onInterrupt() {
-        hideRedOverlay()
-        hideGreenOverlay()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        hideRedOverlay()
-        hideGreenOverlay()
-        tts?.stop()
-        tts?.shutdown()
+        } catch (e: Exception) { Log.e(TAG, "vibrate error", e) }
     }
 }

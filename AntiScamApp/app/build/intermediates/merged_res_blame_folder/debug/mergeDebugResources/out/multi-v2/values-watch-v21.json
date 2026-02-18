@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.antiscam.app-mergeDebugResources-29:/values-watch-v21/values-watch-v21.xml",
+            "outputFile": "com.example.antiscam.app-mergeDebugResources-34:/values-watch-v21/values-watch-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\9eaa056dea401ec8c4e1ab967c3dc814\\transformed\\appcompat-1.7.0\\res\\values-watch-v21\\values-watch-v21.xml",
+                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\01687bb22a9a20f2eabf48243143601c\\transformed\\appcompat-1.7.0\\res\\values-watch-v21\\values-watch-v21.xml",
                     "from": {
                         "startLines": "2,6,10",
                         "startColumns": "4,4,4",

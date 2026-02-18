@@ -23,8 +23,10 @@ import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Button
 import android.widget.TextView
 import java.util.Locale
+import java.util.concurrent.Executors
 
 class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener {
 
@@ -33,15 +35,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         private const val MONITOR_ALL_APPS = true
         private const val HOLD_MS = 2000L
         private const val COOLDOWN_MS = 20_000L
-        private const val SCAM_THRESHOLD = 85.0   // 85% confidence → trigger alert
-
-        private val MONITORED_PACKAGES = setOf(
-            "com.phonepe.app", "com.phonepe.app.preprod",
-            "com.google.android.apps.nbu.paisa.user",
-            "net.one97.paytm", "in.org.npci.upiapp",
-            "com.amazon.mShop.android.shopping",
-            "com.mobikwik_new", "com.freecharge.android", "com.whatsapp",
-        )
+        private const val SCAM_THRESHOLD = 85.0
     }
 
     private var wm: WindowManager? = null
@@ -58,12 +52,30 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
     private var tickRunnable: Runnable? = null
     private var dismissedAt = 0L
 
+    // Database
+    private val dbExecutor = Executors.newSingleThreadExecutor()
+    private lateinit var dao: ScamEventDao
+
+    // Current detection context (for saving to DB)
+    private var currentPkg = ""
+    private var currentRisk = 0.0
+    private var currentSnippet = ""
+
+    private val MONITORED_PACKAGES = setOf(
+        "com.phonepe.app", "com.phonepe.app.preprod",
+        "com.google.android.apps.nbu.paisa.user",
+        "net.one97.paytm", "in.org.npci.upiapp",
+        "com.amazon.mShop.android.shopping",
+        "com.mobikwik_new", "com.freecharge.android", "com.whatsapp",
+    )
+
     // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     override fun onServiceConnected() {
         super.onServiceConnected()
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         tts = TextToSpeech(this, this)
+        dao = ScamDatabase.getInstance(this).scamEventDao()
         startForegroundNotif()
         Log.i(TAG, "Service connected — ML threshold: ${SCAM_THRESHOLD}%")
     }
@@ -103,26 +115,27 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         if (event == null) return
         val pkg = event.packageName?.toString() ?: return
         if (pkg == "com.example.antiscam") return
+        // Ignore system UI (notification shade, lock screen, volume panel)
+        if (pkg == "com.android.systemui" || pkg == "com.android.keyguard") return
         if (!MONITOR_ALL_APPS && pkg !in MONITORED_PACKAGES) return
         if (event.eventType != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
             event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
 
-        // Cooldown after dismiss
         if (dismissedAt > 0 && SystemClock.elapsedRealtime() - dismissedAt < COOLDOWN_MS) return
-
-        // Don't process while overlay is up
         if (redShown) return
 
         val root = rootInActiveWindow ?: return
         val text = extractText(root)
         if (text.isBlank()) return
 
-        // ──── ML INFERENCE ────
         val risk = ScamJudge.calculateRisk(text)
         Log.d(TAG, "[$pkg] Risk: ${"%.1f".format(risk)}%  |  ${text.take(120)}")
 
         if (risk >= SCAM_THRESHOLD) {
             Log.w(TAG, "🚨 SCAM DETECTED (${"%.1f".format(risk)}%) in $pkg")
+            currentPkg = pkg
+            currentRisk = risk
+            currentSnippet = text.take(200)
             showRed(risk)
         }
     }
@@ -140,6 +153,14 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         return sb.toString()
     }
 
+    private fun getAppLabel(pkg: String): String {
+        return try {
+            val pm = packageManager
+            val ai = pm.getApplicationInfo(pkg, 0)
+            pm.getApplicationLabel(ai).toString()
+        } catch (e: Exception) { pkg }
+    }
+
     // ─── Red Overlay ──────────────────────────────────────────────────────────
 
     private fun showRed(riskPercent: Double) {
@@ -152,14 +173,15 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
                 val view = LayoutInflater.from(this).inflate(R.layout.overlay_scam, null)
                 val tvCountdown = view.findViewById<TextView>(R.id.tv_countdown)
                 val tvRisk = view.findViewById<TextView>(R.id.tv_risk)
+                val btnBlock = view.findViewById<Button>(R.id.btn_block)
 
-                // Show ML confidence score
                 tvRisk?.text = "Risk Score: ${"%.0f".format(riskPercent)}%"
 
                 wm?.addView(view, overlayParams())
                 redView = view
 
                 setupDismiss(view, tvCountdown)
+                setupBlock(btnBlock)
                 scamAlert()
                 Log.i(TAG, "Red overlay shown — risk ${"%.1f".format(riskPercent)}%")
             } catch (e: Exception) {
@@ -195,13 +217,50 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         handler.post { removeRedNow() }
     }
 
+    // ─── Save to Database ─────────────────────────────────────────────────────
+
+    private fun saveEvent(action: String) {
+        val event = ScamEvent(
+            packageName = currentPkg,
+            appName = getAppLabel(currentPkg),
+            riskScore = currentRisk,
+            textSnippet = currentSnippet,
+            action = action
+        )
+        dbExecutor.execute {
+            try {
+                dao.insert(event)
+                Log.i(TAG, "Saved to DB: $action — $currentPkg (${currentRisk}%)")
+            } catch (e: Exception) {
+                Log.e(TAG, "DB insert error", e)
+            }
+        }
+    }
+
+    // ─── Block App ────────────────────────────────────────────────────────────
+
+    private fun setupBlock(btnBlock: Button?) {
+        btnBlock?.setOnClickListener {
+            Log.i(TAG, "BLOCK pressed for $currentPkg")
+            saveEvent("BLOCKED")
+
+            // Force close the scam app
+            try {
+                performGlobalAction(GLOBAL_ACTION_HOME)
+            } catch (e: Exception) {
+                Log.e(TAG, "Block action error", e)
+            }
+
+            removeRedNow()
+        }
+    }
+
     // ─── Hold-to-Dismiss ──────────────────────────────────────────────────────
 
     private fun setupDismiss(view: View, tvCountdown: TextView?) {
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    Log.d(TAG, "TOUCH DOWN — hold timer started")
                     var sec = (HOLD_MS / 1000).toInt()
                     tvCountdown?.text = "Hold $sec..."
 
@@ -219,14 +278,13 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
                     handler.postDelayed(tickRunnable!!, 1000L)
 
                     dismissRunnable = Runnable {
-                        Log.i(TAG, "HOLD COMPLETE — removing overlay")
+                        saveEvent("DISMISSED")
                         removeRedNow()
                     }
                     handler.postDelayed(dismissRunnable!!, HOLD_MS)
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    Log.d(TAG, "TOUCH UP — timer cancelled")
                     tickRunnable?.let { handler.removeCallbacks(it) }
                     dismissRunnable?.let { handler.removeCallbacks(it) }
                     dismissRunnable = null

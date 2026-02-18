@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.antiscam.app-mergeDebugResources-29:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.example.antiscam.app-mergeDebugResources-34:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\9eaa056dea401ec8c4e1ab967c3dc814\\transformed\\appcompat-1.7.0\\res\\values-large-v4\\values-large-v4.xml",
+                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\01687bb22a9a20f2eabf48243143601c\\transformed\\appcompat-1.7.0\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\023b4f0aeac7e625f04c769d0e87dec8\\transformed\\material-1.12.0\\res\\values-large-v4\\values-large-v4.xml",
+                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\d213639e02d366026ede6217d269d825\\transformed\\material-1.12.0\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

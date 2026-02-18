@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.antiscam.app-mergeDebugResources-29:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "outputFile": "com.example.antiscam.app-mergeDebugResources-34:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\023b4f0aeac7e625f04c769d0e87dec8\\transformed\\material-1.12.0\\res\\values-h320dp-port-v13\\values-h320dp-port-v13.xml",
+                    "source": "C:\\Users\\phiwa\\.gradle\\caches\\8.12\\transforms\\d213639e02d366026ede6217d269d825\\transformed\\material-1.12.0\\res\\values-h320dp-port-v13\\values-h320dp-port-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

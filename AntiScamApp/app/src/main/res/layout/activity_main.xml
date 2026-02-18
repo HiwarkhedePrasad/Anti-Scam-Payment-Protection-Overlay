@@ -1,63 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
-    android:background="#1A1A2E">
+    android:background="#0D1117">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_launcher_foreground"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AntiScam Guard"
-        android:textColor="#FFFFFF"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="20dp"
+        android:background="#161B22">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:layout_marginEnd="12dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AntiScam Guard"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● ML Model Active"
+                android:textColor="#3FB950"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Stats Cards Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Grant all 3 permissions below to activate protection"
-        android:textColor="#AAAAAA"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:layout_marginBottom="40dp" />
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center">
 
-    <!-- Step 1: Overlay -->
-    <Button
-        android:id="@+id/btn_enable_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="@string/enable_overlay_button"
-        android:textSize="15sp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="#D32F2F" />
+        <!-- Threats Blocked -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#161B22"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
 
-    <!-- Step 2: Accessibility -->
-    <Button
-        android:id="@+id/btn_enable_accessibility"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="@string/enable_service_button"
-        android:textSize="15sp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="#1565C0" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
 
-    <!-- Step 3: Battery optimization — CRITICAL for working without USB -->
-    <Button
-        android:id="@+id/btn_battery_opt"
+                <TextView
+                    android:id="@+id/tv_stat_blocked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#F85149"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Threats\nBlocked"
+                    android:textColor="#8B949E"
+                    android:textSize="11sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Total Scans -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#161B22"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_stat_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#58A6FF"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total\nDetections"
+                    android:textColor="#8B949E"
+                    android:textSize="11sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Avg Risk -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#161B22"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_stat_risk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textColor="#D29922"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avg Risk\nScore"
+                    android:textColor="#8B949E"
+                    android:textSize="11sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <!-- Setup Buttons Section -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="Disable Battery Optimization"
-        android:textSize="15sp"
-        android:backgroundTint="#2E7D32" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="4dp">
+
+        <Button
+            android:id="@+id/btn_enable_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:text="@string/enable_overlay_button"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp"
+            android:backgroundTint="#D32F2F" />
+
+        <Button
+            android:id="@+id/btn_enable_accessibility"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:text="@string/enable_service_button"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp"
+            android:backgroundTint="#1565C0" />
+
+        <Button
+            android:id="@+id/btn_battery_opt"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:text="Disable Battery Optimization"
+            android:textSize="13sp"
+            android:backgroundTint="#2E7D32" />
+    </LinearLayout>
+
+    <!-- Fraud History Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🔍 Threat History"
+            android:textColor="#C9D1D9"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_no_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No threats yet"
+            android:textColor="#484F58"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Fraud History List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
 
 </LinearLayout>

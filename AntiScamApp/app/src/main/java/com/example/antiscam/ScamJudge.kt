@@ -210,6 +210,18 @@ object ScamJudge {
         "pnb" to -0.45,
         "canara" to -0.45,
         "union" to -0.40,
+
+        // ═══ SYSTEM LOCK SCREEN SAFE WORDS ═══
+        "draw" to -0.80,
+        "pattern" to -0.90,
+        "fingerprint" to -0.95,
+        "face" to -0.85,
+        "unlock" to -0.70,
+        "emergency" to -0.75,
+        "recognised" to -0.60,
+        "recognized" to -0.60,
+        "charging" to -0.50,
+        "swipe" to -0.55,
     )
 
     /**

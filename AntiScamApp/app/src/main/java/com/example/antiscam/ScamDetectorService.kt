@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -16,7 +17,9 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -36,6 +39,8 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         private const val HOLD_MS = 2000L
         private const val COOLDOWN_MS = 20_000L
         private const val SCAM_THRESHOLD = 85.0
+        private const val SAFE_THRESHOLD = 30.0
+        private const val SAFE_COOLDOWN_MS = 30_000L
     }
 
     private var wm: WindowManager? = null
@@ -44,6 +49,11 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
     @Volatile private var redShown = false
     @Volatile private var alertFired = false
 
+    // ─── Safe Overlay State ──────────────────────────────────────────────────
+    private var safeView: View? = null
+    @Volatile private var safeShown = false
+    private var safeDismissedAt = 0L
+
     private var tts: TextToSpeech? = null
     private var ttsReady = false
 
@@ -51,6 +61,10 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
     private var dismissRunnable: Runnable? = null
     private var tickRunnable: Runnable? = null
     private var dismissedAt = 0L
+
+    // Audio
+    private var audioManager: AudioManager? = null
+    private var savedVolume = -1
 
     // Database
     private val dbExecutor = Executors.newSingleThreadExecutor()
@@ -73,8 +87,10 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        ScamJudge.init(this)
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         tts = TextToSpeech(this, this)
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         dao = ScamDatabase.getInstance(this).scamEventDao()
         startForegroundNotif()
         Log.i(TAG, "Service connected — ML threshold: ${SCAM_THRESHOLD}%")
@@ -84,11 +100,23 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         if (status == TextToSpeech.SUCCESS) {
             tts?.setLanguage(Locale.ENGLISH)
             ttsReady = true
+
+            // Listen for TTS completion to restore volume
+            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {}
+                override fun onDone(utteranceId: String?) {
+                    if (utteranceId == "SCAM_REPEAT") restoreVolume()
+                }
+                @Deprecated("Deprecated in Java")
+                override fun onError(utteranceId: String?) {
+                    restoreVolume()
+                }
+            })
         }
     }
 
     override fun onInterrupt() { removeRed() }
-    override fun onDestroy() { super.onDestroy(); removeRed(); tts?.shutdown() }
+    override fun onDestroy() { super.onDestroy(); removeRed(); removeSafe(); tts?.shutdown() }
 
     private fun startForegroundNotif() {
         val channelId = "antiscam_guard"
@@ -103,7 +131,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         val pi = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         val notif = Notification.Builder(this, channelId)
             .setContentTitle("AntiScam Guard Active")
-            .setContentText("ML model monitoring for UPI scams")
+            .setContentText("TFLite ML model monitoring for UPI scams")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setContentIntent(pi).setOngoing(true).build()
         startForeground(1, notif)
@@ -137,6 +165,16 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
             currentRisk = risk
             currentSnippet = text.take(200)
             showRed(risk)
+        } else if (risk < SAFE_THRESHOLD && pkg in MONITORED_PACKAGES) {
+            // ─── Safe Mode: show green banner for legitimate transactions ───
+            val safeCooldownElapsed = safeDismissedAt == 0L ||
+                SystemClock.elapsedRealtime() - safeDismissedAt > SAFE_COOLDOWN_MS
+            if (!safeShown && safeCooldownElapsed) {
+                currentPkg = pkg
+                currentRisk = risk
+                currentSnippet = text.take(200)
+                showSafe()
+            }
         }
     }
 
@@ -167,6 +205,9 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         if (redShown || alertFired) return
         alertFired = true
         redShown = true
+
+        // Dismiss safe overlay if it's showing
+        if (safeShown) removeSafe()
 
         handler.post {
             try {
@@ -206,6 +247,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
             alertFired = false
             dismissedAt = SystemClock.elapsedRealtime()
             tts?.stop()
+            restoreVolume()
             Log.i(TAG, "Red overlay REMOVED — 20s cooldown started")
         } catch (e: Exception) {
             Log.e(TAG, "removeRedNow error", e)
@@ -215,6 +257,69 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
     private fun removeRed() {
         if (!redShown) return
         handler.post { removeRedNow() }
+    }
+
+    // ─── Safe Overlay (FR-07/08) ──────────────────────────────────────────────
+
+    private fun showSafe() {
+        if (safeShown) return
+        safeShown = true
+
+        handler.post {
+            try {
+                val view = LayoutInflater.from(this).inflate(R.layout.overlay_safe, null)
+                wm?.addView(view, overlayParamsSafe())
+                safeView = view
+
+                // Auto-dismiss after 3 seconds
+                handler.postDelayed({
+                    removeSafe()
+                }, 3000L)
+
+                // Log to database
+                saveEvent("SAFE")
+                Log.i(TAG, "✅ Safe overlay shown for $currentPkg (risk ${"%.1f".format(currentRisk)}%)")
+            } catch (e: Exception) {
+                Log.e(TAG, "showSafe error", e)
+                safeShown = false
+            }
+        }
+    }
+
+    private fun removeSafe() {
+        if (!safeShown && safeView == null) return
+        handler.post {
+            try {
+                if (safeView != null) {
+                    wm?.removeView(safeView)
+                    safeView = null
+                }
+                safeShown = false
+                safeDismissedAt = SystemClock.elapsedRealtime()
+                Log.i(TAG, "Safe overlay removed — ${SAFE_COOLDOWN_MS / 1000}s cooldown started")
+            } catch (e: Exception) {
+                Log.e(TAG, "removeSafe error", e)
+            }
+        }
+    }
+
+    /** Window params for safe overlay — slim top bar, not full screen */
+    private fun overlayParamsSafe(): WindowManager.LayoutParams {
+        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+
+        val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+
+        return WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            type, flags, PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP
+        }
     }
 
     // ─── Save to Database ─────────────────────────────────────────────────────
@@ -315,15 +420,50 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         )
     }
 
-    // ─── Alerts ───────────────────────────────────────────────────────────────
+    // ─── Alerts (Demo Polish) ─────────────────────────────────────────────────
 
     private fun scamAlert() {
-        vibrate(longArrayOf(0, 500, 200, 500))
+        vibrate(longArrayOf(0, 500, 200, 500, 200, 500))
+
         if (ttsReady) {
-            tts?.speak(
-                "Warning! Scam detected. Do not enter your UPI PIN. This is a fraud request.",
-                TextToSpeech.QUEUE_FLUSH, null, "SCAM"
-            )
+            boostVolume()
+
+            val warningMsg = "WARNING! SCAM DETECTED! Do NOT enter your PIN. " +
+                "This is a FRAUDULENT collect request. Close this app immediately!"
+
+            // First utterance
+            tts?.speak(warningMsg, TextToSpeech.QUEUE_FLUSH, null, "SCAM_FIRST")
+
+            // Repeat after a brief pause for maximum audio impact
+            tts?.playSilentUtterance(800L, TextToSpeech.QUEUE_ADD, "SCAM_PAUSE")
+            tts?.speak(warningMsg, TextToSpeech.QUEUE_ADD, null, "SCAM_REPEAT")
+        }
+    }
+
+    /** Boost media volume to max before TTS warning */
+    private fun boostVolume() {
+        try {
+            audioManager?.let { am ->
+                savedVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC)
+                val maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                am.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol, 0)
+                Log.d(TAG, "Volume boosted: $savedVolume → $maxVol")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "boostVolume error", e)
+        }
+    }
+
+    /** Restore media volume to previous level */
+    private fun restoreVolume() {
+        try {
+            if (savedVolume >= 0) {
+                audioManager?.setStreamVolume(AudioManager.STREAM_MUSIC, savedVolume, 0)
+                Log.d(TAG, "Volume restored to $savedVolume")
+                savedVolume = -1
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "restoreVolume error", e)
         }
     }
 

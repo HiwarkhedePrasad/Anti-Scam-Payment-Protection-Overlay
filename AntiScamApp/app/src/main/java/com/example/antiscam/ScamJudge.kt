@@ -1,20 +1,49 @@
 package com.example.antiscam
 
+import android.content.Context
+import android.util.Log
+import org.tensorflow.lite.Interpreter
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import kotlin.math.exp
 
 /**
- * Logistic Regression inference engine — runs entirely on-device.
+ * ML Inference Engine — TFLite-powered scam detector.
  *
- * Trained on 1,000 real + synthetic UPI messages (Kaggle + MOSTLY AI).
- * Extended with additional scam vocabulary from RBI fraud advisories.
- * Model accuracy: 99% on test set.
+ * Loads a trained logistic regression model (scam_detector.tflite) via TensorFlow Lite
+ * Interpreter. Falls back to embedded weights if TFLite initialization fails.
  *
- * Sigmoid: P(scam) = 1 / (1 + e^(-z))
- * where z = intercept + Σ(weight_i × feature_i)
+ * Model trained on 1,000+ real + synthetic UPI messages (Kaggle + MOSTLY AI).
+ * Extended with vocabulary from RBI fraud advisories.
+ * Accuracy: 99% on held-out test set.
  */
 object ScamJudge {
 
+    private const val TAG = "ScamDetector"
+    private const val MODEL_FILE = "scam_detector.tflite"
+
+    private var interpreter: Interpreter? = null
+    private var tfliteReady = false
+
+    // Fallback intercept (used only if TFLite fails)
     private const val INTERCEPT = -0.9924
+
+    /**
+     * Vocabulary → feature-index mapping.
+     * Order must match the model's input vector exactly.
+     * Sorted alphabetically to match the Python training script.
+     */
+    private val vocabulary: Map<String, Int> by lazy {
+        val words = weights.keys.sorted()
+        words.mapIndexed { index, word -> word to index }.toMap()
+    }
+
+    /** Feature count = vocabulary size */
+    private val featureCount: Int get() = weights.size
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Weight map — used for fallback AND to define vocabulary order
+    // ═══════════════════════════════════════════════════════════════════════════
 
     private val weights = mapOf(
         // ═══ HIGH-RISK SCAM WORDS (from trained model) ═══
@@ -61,7 +90,6 @@ object ScamJudge {
         "blocked" to 0.4034,
 
         // ═══ ADDITIONAL SCAM PATTERNS (UPI/payment fraud) ═══
-        // Fake collect requests
         "collecting" to 0.95,
         "requesting" to 0.90,
         "requested" to 0.85,
@@ -139,7 +167,7 @@ object ScamJudge {
 
         // Money transfer scam words
         "transfer" to 0.50,
-        "send" to -0.30,     // overridden: less negative because scammers use "send money"
+        "send" to -0.30,
         "amount" to 0.30,
         "money" to 0.45,
         "payment" to 0.40,
@@ -224,19 +252,71 @@ object ScamJudge {
         "swipe" to -0.55,
     )
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Initialization — load TFLite model from assets
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    fun init(context: Context) {
+        try {
+            val assetFd = context.assets.openFd(MODEL_FILE)
+            val inputStream = assetFd.createInputStream()
+            val modelBytes = ByteArray(assetFd.declaredLength.toInt())
+            inputStream.read(modelBytes)
+            inputStream.close()
+
+            val buffer = ByteBuffer.allocateDirect(modelBytes.size)
+                .order(ByteOrder.nativeOrder())
+            buffer.put(modelBytes)
+
+            interpreter = Interpreter(buffer)
+            tfliteReady = true
+            Log.i(TAG, "TFLite model loaded ($featureCount features)")
+        } catch (e: Exception) {
+            Log.w(TAG, "TFLite load failed, using fallback: ${e.message}")
+            tfliteReady = false
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Inference
+    // ═══════════════════════════════════════════════════════════════════════════
+
     /**
      * Returns scam probability as a percentage (0.0 to 100.0).
-     * Uses binary bag-of-words: each unique word contributes its weight once.
+     *
+     * Primary path: TFLite Interpreter inference.
+     * Fallback path: embedded-weight sigmoid (if TFLite not loaded).
      */
     fun calculateRisk(text: String): Double {
         val words = text.lowercase().split(Regex("\\W+")).toSet()
 
+        if (tfliteReady && interpreter != null) {
+            return inferTFLite(words)
+        }
+        return inferFallback(words)
+    }
+
+    /** TFLite Interpreter inference — bag-of-words → sigmoid output */
+    private fun inferTFLite(words: Set<String>): Double {
+        val input = FloatArray(featureCount)
+        for (word in words) {
+            val idx = vocabulary[word]
+            if (idx != null) input[idx] = 1.0f
+        }
+
+        val inputArray = arrayOf(input)
+        val outputArray = Array(1) { FloatArray(1) }
+
+        interpreter!!.run(inputArray, outputArray)
+        return (outputArray[0][0] * 100.0).coerceIn(0.0, 100.0)
+    }
+
+    /** Fallback: embedded-weight logistic regression (original behavior) */
+    private fun inferFallback(words: Set<String>): Double {
         var z = INTERCEPT
         for (word in words) {
             z += weights[word] ?: 0.0
         }
-
-        // Sigmoid: 1 / (1 + e^-z)
         val probability = 1.0 / (1.0 + exp(-z))
         return probability * 100.0
     }

@@ -50,6 +50,8 @@ MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\
 MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\5e9fcf4d37792ad09b46cd086ebd5f3f\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\101a00a7ec0f1c29e66dfc3d2366ddfd\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\0e9e48bfe8ac5c3f963f85d325d60b9f\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [org.tensorflow:tensorflow-lite:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\8ccdf2cfaa187019eaf33c58309148be\transformed\jetified-tensorflow-lite-2.14.0\AndroidManifest.xml:2:1-11:12
+MERGED from [org.tensorflow:tensorflow-lite-api:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\b14d246b1a2f67f3d08d8d2b6d2bf7f0\transformed\jetified-tensorflow-lite-api-2.14.0\AndroidManifest.xml:2:1-11:12
 	package
 		INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml
 	android:versionName
@@ -123,6 +125,10 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\ph
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\phiwa\.gradle\caches\8.12\transforms\a1cb88ffb6ace9f585c81c4568984c96\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\phiwa\.gradle\caches\8.12\transforms\50c65a39f56bd93246eae5a45058cd54\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\phiwa\.gradle\caches\8.12\transforms\50c65a39f56bd93246eae5a45058cd54\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [org.tensorflow:tensorflow-lite:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\8ccdf2cfaa187019eaf33c58309148be\transformed\jetified-tensorflow-lite-2.14.0\AndroidManifest.xml:9:5-20
+MERGED from [org.tensorflow:tensorflow-lite:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\8ccdf2cfaa187019eaf33c58309148be\transformed\jetified-tensorflow-lite-2.14.0\AndroidManifest.xml:9:5-20
+MERGED from [org.tensorflow:tensorflow-lite-api:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\b14d246b1a2f67f3d08d8d2b6d2bf7f0\transformed\jetified-tensorflow-lite-api-2.14.0\AndroidManifest.xml:9:5-20
+MERGED from [org.tensorflow:tensorflow-lite-api:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\b14d246b1a2f67f3d08d8d2b6d2bf7f0\transformed\jetified-tensorflow-lite-api-2.14.0\AndroidManifest.xml:9:5-20
 	android:extractNativeLibs
 		INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml
 	android:appComponentFactory
@@ -285,6 +291,10 @@ MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\User
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\101a00a7ec0f1c29e66dfc3d2366ddfd\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\0e9e48bfe8ac5c3f963f85d325d60b9f\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\0e9e48bfe8ac5c3f963f85d325d60b9f\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [org.tensorflow:tensorflow-lite:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\8ccdf2cfaa187019eaf33c58309148be\transformed\jetified-tensorflow-lite-2.14.0\AndroidManifest.xml:6:5-7:38
+MERGED from [org.tensorflow:tensorflow-lite:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\8ccdf2cfaa187019eaf33c58309148be\transformed\jetified-tensorflow-lite-2.14.0\AndroidManifest.xml:6:5-7:38
+MERGED from [org.tensorflow:tensorflow-lite-api:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\b14d246b1a2f67f3d08d8d2b6d2bf7f0\transformed\jetified-tensorflow-lite-api-2.14.0\AndroidManifest.xml:6:5-7:38
+MERGED from [org.tensorflow:tensorflow-lite-api:2.14.0] C:\Users\phiwa\.gradle\caches\8.12\transforms\b14d246b1a2f67f3d08d8d2b6d2bf7f0\transformed\jetified-tensorflow-lite-api-2.14.0\AndroidManifest.xml:6:5-7:38
 	android:targetSdkVersion
 		INJECTED from C:\Users\phiwa\Desktop\ek\AntiScamApp\app\src\main\AndroidManifest.xml
 	android:minSdkVersion

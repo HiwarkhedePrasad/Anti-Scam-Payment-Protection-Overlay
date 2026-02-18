@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shield icon for the Anti-Scam app launcher -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Shield body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,18 L82,30 L82,54 C82,70 68,82 54,88 C40,82 26,70 26,54 L26,30 Z" />
+    <!-- Exclamation mark -->
+    <path
+        android:fillColor="#D32F2F"
+        android:pathData="M51,42 L57,42 L55.5,65 L52.5,65 Z" />
+    <circle
+        android:fillColor="#D32F2F"
+        android:cx="54"
+        android:cy="71"
+        android:r="3.5" />
+</vector>

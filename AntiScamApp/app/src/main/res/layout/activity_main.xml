@@ -4,26 +4,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:padding="32dp"
+    android:background="#1A1A2E">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/permission_status_text"
-        android:textSize="18sp"
-        android:layout_marginBottom="24dp"/>
+        android:text="AntiScam Guard"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tv_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setup_instructions"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="40dp" />
 
     <Button
         android:id="@+id/btn_enable_overlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:text="@string/enable_overlay_button"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="15sp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#D32F2F" />
 
     <Button
         android:id="@+id/btn_enable_accessibility"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/enable_service_button"/>
+        android:layout_height="56dp"
+        android:text="@string/enable_service_button"
+        android:textSize="15sp"
+        android:backgroundTint="#1565C0" />
 
 </LinearLayout>

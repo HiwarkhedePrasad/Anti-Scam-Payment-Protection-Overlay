@@ -1,0 +1,143 @@
+Initialized native services in: C:\Users\phiwa\.gradle\native
+Initialized jansi services in: C:\Users\phiwa\.gradle\native
+Found daemon DaemonInfo{pid=23088, address=[9a25247f-9930-4d77-800a-247588c1676d port:56433, addresses:[/127.0.0.1]], state=Idle, lastBusy=1742753638135, context=DefaultDaemonContext[uid=0947108d-6812-4c95-ac0f-969f719e4ee3,javaHome=C:\Program Files\Microsoft\jdk-17.0.13.11-hotspot,javaVersion=17,javaVendor=Microsoft,daemonRegistryDir=C:\Users\phiwa\.gradle\daemon,pid=23088,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=512m,-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=IN,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+At least one daemon option is different.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Program Files\Microsoft\jdk-17.0.13.11-hotspot (no JDK specified, using current Java home), daemonOpts=[-XX:MaxMetaspaceSize=384m, -XX:+HeapDumpOnOutOfMemoryError, -Xms256m, -Xmx512m, -Dfile.encoding=windows-1252, -Duser.country=IN, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=0947108d-6812-4c95-ac0f-969f719e4ee3,javaHome=C:\Program Files\Microsoft\jdk-17.0.13.11-hotspot,javaVersion=17,javaVendor=Microsoft,daemonRegistryDir=C:\Users\phiwa\.gradle\daemon,pid=23088,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=512m,-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=IN,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+Found daemon DaemonInfo{pid=22880, address=[50609d79-1447-4a37-b68e-73d20f5b2035 port:56244, addresses:[/127.0.0.1]], state=Idle, lastBusy=1771181859144, context=DefaultDaemonContext[uid=7199600e-a59c-47ba-863b-9860b253796e,javaHome=C:\Program Files\Android\Android Studio\jbr,javaVersion=21,javaVendor=JetBrains s.r.o.,daemonRegistryDir=C:\Users\phiwa\.gradle\daemon,pid=22880,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=4G,-XX:ReservedCodeCacheSize=512m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx8G,-Dfile.encoding=UTF-8,-Duser.country=IN,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Program Files\Microsoft\jdk-17.0.13.11-hotspot (no JDK specified, using current Java home), daemonOpts=[-XX:MaxMetaspaceSize=384m, -XX:+HeapDumpOnOutOfMemoryError, -Xms256m, -Xmx512m, -Dfile.encoding=windows-1252, -Duser.country=IN, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=7199600e-a59c-47ba-863b-9860b253796e,javaHome=C:\Program Files\Android\Android Studio\jbr,javaVersion=21,javaVendor=JetBrains s.r.o.,daemonRegistryDir=C:\Users\phiwa\.gradle\daemon,pid=22880,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=4G,-XX:ReservedCodeCacheSize=512m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx8G,-Dfile.encoding=UTF-8,-Duser.country=IN,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 25564). The daemon log file: C:\Users\phiwa\.gradle\daemon\8.12\daemon-25564.out.log
+Starting 5th build in daemon [uptime: 15 mins 20.511 secs, performance: 100%, GC rate: 0.00/s, heap usage: 0% of 512 MiB, non-heap usage: 41% of 384 MiB]
+Using 16 worker leases.
+Now considering [C:\Users\phiwa\Desktop\ek\AntiScamApp] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file 'C:\Users\phiwa\Desktop\ek\AntiScamApp\settings.gradle.kts'.
+Projects loaded. Root project using build file 'C:\Users\phiwa\Desktop\ek\AntiScamApp\build.gradle.kts'.
+Included projects: [root project 'AntiScamApp', project ':app']
+
+> Configure project :
+Evaluating root project 'AntiScamApp' using build file 'C:\Users\phiwa\Desktop\ek\AntiScamApp\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '8.2.0', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '1.9.20', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file 'C:\Users\phiwa\Desktop\ek\AntiScamApp\app\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application']
+Resolved plugin [id: 'org.jetbrains.kotlin.android']
+Using default execution profile
+Using Kotlin Gradle Plugin gradle81 variant
+All projects evaluated.
+Task name matched 'assembleDebug'
+Selected primary task 'assembleDebug' from project :
+Tasks to be executed: [task ':app:preBuild', task ':app:preDebugBuild', task ':app:mergeDebugNativeDebugMetadata', task ':app:checkKotlinGradlePluginConfigurationErrors', task ':app:checkDebugAarMetadata', task ':app:generateDebugResValues', task ':app:mapDebugSourceSetPaths', task ':app:generateDebugResources', task ':app:mergeDebugResources', task ':app:packageDebugResources', task ':app:parseDebugLocalResources', task ':app:createDebugCompatibleScreenManifests', task ':app:extractDeepLinksDebug', task ':app:processDebugMainManifest', task ':app:processDebugManifest', task ':app:processDebugManifestForPackage', task ':app:processDebugResources', task ':app:compileDebugKotlin', task ':app:javaPreCompileDebug', task ':app:compileDebugJavaWithJavac', task ':app:mergeDebugShaders', task ':app:compileDebugShaders', task ':app:generateDebugAssets', task ':app:mergeDebugAssets', task ':app:compressDebugAssets', task ':app:processDebugJavaRes', task ':app:mergeDebugJavaResource', task ':app:checkDebugDuplicateClasses', task ':app:desugarDebugFileDependencies', task ':app:mergeExtDexDebug', task ':app:mergeLibDexDebug', task ':app:dexBuilderDebug', task ':app:mergeProjectDexDebug', task ':app:mergeDebugJniLibFolders', task ':app:mergeDebugNativeLibs', task ':app:stripDebugDebugSymbols', task ':app:validateSigningDebug', task ':app:writeDebugAppMetadata', task ':app:writeDebugSigningConfigVersions', task ':app:packageDebug', task ':app:createDebugApkListingFileRedirect', task ':app:assembleDebug']
+Tasks that were excluded: []
+Resolve mutations for :app:preBuild (Thread[Execution worker,5,main]) started.
+:app:preBuild (Thread[Execution worker,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preDebugBuild (Thread[Execution worker,5,main]) started.
+:app:preDebugBuild (Thread[Execution worker,5,main]) started.
+
+> Task :app:preDebugBuild UP-TO-DATE
+Skipping task ':app:preDebugBuild' as it has no actions.
+Resolve mutations for :app:mergeDebugNativeDebugMetadata (Thread[Execution worker,5,main]) started.
+:app:mergeDebugNativeDebugMetadata (Thread[Execution worker,5,main]) started.
+
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+Skipping task ':app:mergeDebugNativeDebugMetadata' as it has no source files and no previous output files.
+Resolve mutations for :app:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+:app:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+Caching disabled for task ':app:checkKotlinGradlePluginConfigurationErrors' because:
+  Build cache is disabled
+Task ':app:checkKotlinGradlePluginConfigurationErrors' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+Resolve mutations for :app:checkDebugAarMetadata (Thread[Execution worker,5,main]) started.
+:app:checkDebugAarMetadata (Thread[included builds,5,main]) started.
+
+> Task :app:checkDebugAarMetadata FAILED
+
+[Incubating] Problems report is available at: file:///C:/Users/phiwa/Desktop/ek/AntiScamApp/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:checkDebugAarMetadata'.
+> Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+  Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
+  The following AndroidX dependencies are detected:
+  :app:debugRuntimeClasspath -> androidx.core:core-ktx:1.12.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.annotation:annotation:1.6.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.core:core:1.12.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.annotation:annotation-experimental:1.3.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.collection:collection:1.1.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.core:core:1.12.0 -> androidx.concurrent:concurrent-futures:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0 -> androidx.interpolator:interpolator:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.arch.core:core-common:2.2.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1 -> androidx.arch.core:core-runtime:2.2.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.lifecycle:lifecycle-common:2.6.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.lifecycle:lifecycle-process:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.startup:startup-runtime:1.1.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.activity:activity:1.8.0 -> androidx.tracing:tracing:1.0.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.lifecycle:lifecycle-viewmodel:2.6.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.activity:activity:1.8.0 -> androidx.profileinstaller:profileinstaller:1.3.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.core:core:1.12.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.activity:activity:1.8.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.vectordrawable:vectordrawable:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.cursoradapter:cursoradapter:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.drawerlayout:drawerlayout:1.1.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.drawerlayout:drawerlayout:1.1.1 -> androidx.customview:customview:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2-views-helper:1.2.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.viewpager:viewpager:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.fragment:fragment:1.3.6 -> androidx.loader:loader:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.resourceinspection:resourceinspection-annotation:1.0.1
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.cardview:cardview:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.coordinatorlayout:coordinatorlayout:1.1.0
+  :app:debugRuntimeClasspath -> androidx.constraintlayout:constraintlayout:2.1.4
+  :app:debugRuntimeClasspath -> androidx.constraintlayout:constraintlayout:2.1.4 -> androidx.constraintlayout:constraintlayout-core:1.0.4
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.recyclerview:recyclerview:1.1.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.transition:transition:1.2.0
+  :app:debugRuntimeClasspath -> com.google.android.material:material:1.11.0 -> androidx.viewpager2:viewpager2:1.0.0
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.12/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 1s
+2 actionable tasks: 2 executed
+Watched directory hierarchies: []

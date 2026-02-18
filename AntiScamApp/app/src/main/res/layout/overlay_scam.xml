@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FR-05: Full-screen overlay that BLOCKS all touch input.
+     The service sets no FLAG_NOT_TOUCHABLE, so this view consumes every touch.
+     FR-06: Long-press (3 seconds) to dismiss — set up in ScamDetectorService. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/red_warning"
+    android:clickable="true"
+    android:focusable="true"
+    android:keepScreenOn="true">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <!-- Shield icon -->
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚠️ SCAM DETECTED!"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DO NOT ENTER YOUR UPI PIN\n\nThis is a fraudulent payment request.\nYour money is at risk."
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hold for 3 seconds to dismiss"
+            android:textColor="#CCFFFFFF"
+            android:textSize="13sp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,13 +1,11 @@
 package com.example.antiscam
 
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,18 +23,18 @@ class MainActivity : AppCompatActivity() {
         btnEnableAccessibility = findViewById(R.id.btn_enable_accessibility)
 
         btnEnableOverlay.setOnClickListener {
-            if (!checkOverlayPermission()) {
+            if (!hasOverlayPermission()) {
                 requestOverlayPermission()
             } else {
-                Toast.makeText(this, "Overlay Permission already granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Overlay permission already granted ✅", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnEnableAccessibility.setOnClickListener {
-            if (!isAccessibilityServiceEnabled(ScamDetectorService::class.java)) {
-                openAccessibilitySettings()
+            if (!isScamServiceEnabled()) {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
             } else {
-                Toast.makeText(this, "Accessibility Service already enabled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Accessibility service already active ✅", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -47,58 +45,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateButtonStates() {
-        btnEnableOverlay.isEnabled = !checkOverlayPermission()
-        btnEnableOverlay.text = if (checkOverlayPermission()) "Overlay Permission Granted" else getString(R.string.enable_overlay_button)
-        
-        val serviceEnabled = isAccessibilityServiceEnabled(ScamDetectorService::class.java)
-        btnEnableAccessibility.isEnabled = !serviceEnabled
-        btnEnableAccessibility.text = if (serviceEnabled) "Service Enabled" else getString(R.string.enable_service_button)
+        val overlayOk = hasOverlayPermission()
+        btnEnableOverlay.text = if (overlayOk) getString(R.string.overlay_granted) else getString(R.string.enable_overlay_button)
+        btnEnableOverlay.isEnabled = !overlayOk
+
+        val serviceOk = isScamServiceEnabled()
+        btnEnableAccessibility.text = if (serviceOk) getString(R.string.service_enabled) else getString(R.string.enable_service_button)
+        btnEnableAccessibility.isEnabled = !serviceOk
     }
 
-    private fun checkOverlayPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Settings.canDrawOverlays(this)
-        } else {
-            true
-        }
-    }
+    private fun hasOverlayPermission(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
 
     private fun requestOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-            startActivity(intent)
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
         }
     }
 
-    private fun isAccessibilityServiceEnabled(service: Class<*>?): Boolean {
-        // Correct way to check if YOUR specific service is enabled
-        val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val enabledServices = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
-        
-        if (enabledServices.isNullOrEmpty()) return false
-        
-        val colonSplitter = android.text.TextUtils.SimpleStringSplitter(':')
-        colonSplitter.setString(enabledServices)
-        
-        val myService = "${packageName}/${service?.canonicalName}"
-        val myServiceShort = "${packageName}/.${service?.simpleName}"
+    private fun isScamServiceEnabled(): Boolean {
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
 
-        while (colonSplitter.hasNext()) {
-            val componentName = colonSplitter.next()
-            if (componentName.equals(myService, ignoreCase = true) || 
-                componentName.equals(myServiceShort, ignoreCase = true)) {
-                return true
-            }
+        val target = "$packageName/${ScamDetectorService::class.java.canonicalName}"
+        val targetShort = "$packageName/.${ScamDetectorService::class.java.simpleName}"
+
+        return enabledServices.split(":").any { component ->
+            component.equals(target, ignoreCase = true) ||
+                    component.equals(targetShort, ignoreCase = true)
         }
-        return false
-    }
-    
-    // Easier check using AccessibilityManager is hard because getEnabledAccessibilityServiceList returns info, 
-    // but matching it to our class is sometimes tricky with component names. 
-    // The Settings.Secure check is robust.
-
-    private fun openAccessibilitySettings() {
-        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-        startActivity(intent)
     }
 }

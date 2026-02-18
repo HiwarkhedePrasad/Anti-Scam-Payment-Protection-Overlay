@@ -2,5 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="red_warning">#AAFF0000</color>
+    <!-- Overlay colors -->
+    <color name="red_warning">#CCFF0000</color>
+    <color name="red_warning_solid">#FFD32F2F</color>
+    <color name="red_dark">#FFB71C1C</color>
+    <color name="green_safe">#FF388E3C</color>
+    <color name="green_safe_overlay">#CC00C853</color>
 </resources>

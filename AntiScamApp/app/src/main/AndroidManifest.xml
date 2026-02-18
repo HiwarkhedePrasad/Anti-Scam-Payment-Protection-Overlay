@@ -2,8 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Core permissions -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Required for querying installed packages (FR-02 package filtering) on API 30+ -->
+    <queries>
+        <package android:name="com.phonepe.app" />
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="net.one97.paytm" />
+        <package android:name="in.org.npci.upiapp" />
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -32,8 +42,9 @@
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
+                <!-- FIX: was <action>, must be <category> for LAUNCHER -->
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

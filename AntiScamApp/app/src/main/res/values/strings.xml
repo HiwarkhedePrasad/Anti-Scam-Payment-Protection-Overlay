@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">AntiScam App</string>
-    <string name="accessibility_service_description">Scans screen for potential scams involving UPI PIN requests.</string>
-    <string name="overlay_warning_text">SCAM DETECTED!\nDO NOT ENTER YOUR PIN!</string>
+    <string name="app_name">AntiScam Guard</string>
+    <string name="accessibility_service_description">Monitors UPI payment apps (PhonePe, GPay, Paytm) for scam patterns and blocks fraudulent PIN requests.</string>
     <string name="enable_service_button">Enable Accessibility Service</string>
-    <string name="enable_overlay_button">Enable Overlay Permission</string>
-    <string name="permission_status_text">Permissions Status:</string>
+    <string name="enable_overlay_button">Grant Overlay Permission</string>
+    <string name="permission_status_text">Setup Required</string>
+    <string name="service_enabled">✅ Service Active</string>
+    <string name="overlay_granted">✅ Overlay Granted</string>
+    <string name="setup_instructions">Grant both permissions below to activate scam protection for PhonePe, GPay, and Paytm.</string>
 </resources>

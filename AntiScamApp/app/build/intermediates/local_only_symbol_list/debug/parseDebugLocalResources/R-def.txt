@@ -1,0 +1,31 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color green_safe
+color green_safe_overlay
+color red_dark
+color red_warning
+color red_warning_solid
+color white
+drawable ic_launcher_foreground
+id btn_enable_accessibility
+id btn_enable_overlay
+id tv_instructions
+layout activity_main
+layout overlay_layout
+layout overlay_safe
+layout overlay_scam
+mipmap ic_launcher
+mipmap ic_launcher_round
+string accessibility_service_description
+string app_name
+string enable_overlay_button
+string enable_service_button
+string overlay_granted
+string permission_status_text
+string service_enabled
+string setup_instructions
+style Theme.AntiScamApp
+xml accessibility_service_config
+xml backup_rules
+xml data_extraction_rules

@@ -55,7 +55,7 @@
             android:id="@+id/btn_block"
             android:layout_width="280dp"
             android:layout_height="56dp"
-            android:text="🛡️  BLOCK &amp; GO HOME"
+            android:text="🛡️GO HOME"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -73,6 +73,15 @@
             android:textSize="13sp"
             android:gravity="center"
             android:padding="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notice : Block This Source"
+            android:textColor="#99FFFFFF"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:paddingTop="4dp" />
 
     </LinearLayout>
 

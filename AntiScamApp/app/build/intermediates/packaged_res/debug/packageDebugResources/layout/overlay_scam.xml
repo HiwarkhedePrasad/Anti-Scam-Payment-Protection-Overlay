@@ -73,15 +73,16 @@
             android:textSize="13sp"
             android:gravity="center"
             android:padding="12dp" />
-         <TextView
-            android:id="@+id/tv_countdown"
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notice : Block This Source"
             android:textColor="#99FFFFFF"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:gravity="center"
-            android:padding="12dp" />
+            android:paddingTop="4dp" />
+
     </LinearLayout>
 
 </FrameLayout>

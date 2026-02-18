@@ -33,6 +33,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         private const val MONITOR_ALL_APPS = true
         private const val HOLD_MS = 2000L
         private const val COOLDOWN_MS = 20_000L
+        private const val SCAM_THRESHOLD = 85.0   // 85% confidence → trigger alert
 
         private val MONITORED_PACKAGES = setOf(
             "com.phonepe.app", "com.phonepe.app.preprod",
@@ -41,21 +42,13 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
             "com.amazon.mShop.android.shopping",
             "com.mobikwik_new", "com.freecharge.android", "com.whatsapp",
         )
-
-        private val SCAM_A = listOf("request from", "collect request", "payment request", "requesting money")
-        private val SCAM_B = listOf("enter upi pin", "enter pin", "upi pin", "confirm with pin", "authenticate")
-        private val SAFE_A = listOf("paying", "pay to", "sending")
-        private val SAFE_B = listOf("₹", "rs.", "inr")
     }
 
     private var wm: WindowManager? = null
     private var redView: View? = null
-    private var greenView: View? = null
 
-    // Use @Volatile so checks in onAccessibilityEvent (binder thread) are visible
     @Volatile private var redShown = false
-    @Volatile private var greenShown = false
-    @Volatile private var alertFired = false   // prevents TTS/vibration from firing multiple times
+    @Volatile private var alertFired = false
 
     private var tts: TextToSpeech? = null
     private var ttsReady = false
@@ -72,7 +65,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         wm = getSystemService(WINDOW_SERVICE) as WindowManager
         tts = TextToSpeech(this, this)
         startForegroundNotif()
-        Log.i(TAG, "Service connected")
+        Log.i(TAG, "Service connected — ML threshold: ${SCAM_THRESHOLD}%")
     }
 
     override fun onInit(status: Int) {
@@ -82,8 +75,8 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         }
     }
 
-    override fun onInterrupt() { removeAll() }
-    override fun onDestroy() { super.onDestroy(); removeAll(); tts?.shutdown() }
+    override fun onInterrupt() { removeRed() }
+    override fun onDestroy() { super.onDestroy(); removeRed(); tts?.shutdown() }
 
     private fun startForegroundNotif() {
         val channelId = "antiscam_guard"
@@ -91,14 +84,16 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nm.createNotificationChannel(
                 NotificationChannel(channelId, "AntiScam Guard", NotificationManager.IMPORTANCE_LOW).apply {
-                    description = "Monitoring UPI apps for scam activity"
+                    description = "ML-powered UPI scam monitoring"
                 }
             )
         }
         val pi = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         val notif = Notification.Builder(this, channelId)
-            .setContentTitle("AntiScam Guard Active").setContentText("Monitoring for UPI scams")
-            .setSmallIcon(android.R.drawable.ic_lock_lock).setContentIntent(pi).setOngoing(true).build()
+            .setContentTitle("AntiScam Guard Active")
+            .setContentText("ML model monitoring for UPI scams")
+            .setSmallIcon(android.R.drawable.ic_lock_lock)
+            .setContentIntent(pi).setOngoing(true).build()
         startForeground(1, notif)
     }
 
@@ -115,26 +110,22 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         // Cooldown after dismiss
         if (dismissedAt > 0 && SystemClock.elapsedRealtime() - dismissedAt < COOLDOWN_MS) return
 
-        // *** CRITICAL: If overlay is already shown, do NOT process any more events ***
-        // This prevents TTS stuttering and redundant calls
+        // Don't process while overlay is up
         if (redShown) return
 
         val root = rootInActiveWindow ?: return
-        val text = extractText(root).lowercase()
+        val text = extractText(root)
         if (text.isBlank()) return
 
-        when {
-            isScam(text) -> {
-                Log.w(TAG, "🚨 SCAM in $pkg")
-                hideGreen()
-                showRed()
-            }
-            isSafe(text) && !greenShown -> showGreen()
+        // ──── ML INFERENCE ────
+        val risk = ScamJudge.calculateRisk(text)
+        Log.d(TAG, "[$pkg] Risk: ${"%.1f".format(risk)}%  |  ${text.take(120)}")
+
+        if (risk >= SCAM_THRESHOLD) {
+            Log.w(TAG, "🚨 SCAM DETECTED (${"%.1f".format(risk)}%) in $pkg")
+            showRed(risk)
         }
     }
-
-    private fun isScam(t: String) = SCAM_A.any { t.contains(it) } && SCAM_B.any { t.contains(it) }
-    private fun isSafe(t: String) = SAFE_A.any { t.contains(it) } && SAFE_B.any { t.contains(it) }
 
     private fun extractText(node: AccessibilityNodeInfo?): String {
         if (node == null) return ""
@@ -151,30 +142,26 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
 
     // ─── Red Overlay ──────────────────────────────────────────────────────────
 
-    private fun showRed() {
-        // Double-check (volatile read) before posting to handler
+    private fun showRed(riskPercent: Double) {
         if (redShown || alertFired) return
-        alertFired = true   // set IMMEDIATELY to prevent any other event from triggering
-        redShown = true     // set IMMEDIATELY — don't wait for handler.post
+        alertFired = true
+        redShown = true
 
         handler.post {
             try {
                 val view = LayoutInflater.from(this).inflate(R.layout.overlay_scam, null)
                 val tvCountdown = view.findViewById<TextView>(R.id.tv_countdown)
+                val tvRisk = view.findViewById<TextView>(R.id.tv_risk)
 
-                // Use FLAG_NOT_FOCUSABLE — KEY FIX:
-                // - Overlay receives ALL touch events
-                // - System home/back/recents STILL WORK (they're system gestures, not touch events)
-                // - No FLAG_NOT_TOUCH_MODAL (which was stealing touches on some devices)
+                // Show ML confidence score
+                tvRisk?.text = "Risk Score: ${"%.0f".format(riskPercent)}%"
+
                 wm?.addView(view, overlayParams())
                 redView = view
 
-                // Attach dismiss AFTER adding to WindowManager
                 setupDismiss(view, tvCountdown)
-
-                // Fire alert ONCE
                 scamAlert()
-                Log.i(TAG, "Red overlay shown + alert fired")
+                Log.i(TAG, "Red overlay shown — risk ${"%.1f".format(riskPercent)}%")
             } catch (e: Exception) {
                 Log.e(TAG, "showRed error", e)
                 redShown = false
@@ -203,13 +190,18 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         }
     }
 
-    // ─── Dismiss via touch on root view ───────────────────────────────────────
+    private fun removeRed() {
+        if (!redShown) return
+        handler.post { removeRedNow() }
+    }
+
+    // ─── Hold-to-Dismiss ──────────────────────────────────────────────────────
 
     private fun setupDismiss(view: View, tvCountdown: TextView?) {
-        view.setOnTouchListener { v, event ->
+        view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    Log.d(TAG, "TOUCH DOWN — starting ${HOLD_MS}ms timer")
+                    Log.d(TAG, "TOUCH DOWN — hold timer started")
                     var sec = (HOLD_MS / 1000).toInt()
                     tvCountdown?.text = "Hold $sec..."
 
@@ -234,7 +226,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    Log.d(TAG, "TOUCH UP — cancelling timer")
+                    Log.d(TAG, "TOUCH UP — timer cancelled")
                     tickRunnable?.let { handler.removeCallbacks(it) }
                     dismissRunnable?.let { handler.removeCallbacks(it) }
                     dismissRunnable = null
@@ -247,38 +239,6 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         }
     }
 
-    // ─── Green Overlay ────────────────────────────────────────────────────────
-
-    private fun showGreen() {
-        if (greenShown) return
-        greenShown = true
-        handler.post {
-            try {
-                val view = LayoutInflater.from(this).inflate(R.layout.overlay_safe, null)
-                wm?.addView(view, overlayParams())
-                greenView = view
-                safeAlert()
-                handler.postDelayed({ hideGreen() }, 4000L)
-            } catch (e: Exception) {
-                Log.e(TAG, "showGreen error", e)
-                greenShown = false
-            }
-        }
-    }
-
-    private fun hideGreen() {
-        if (!greenShown) return
-        handler.post {
-            try { wm?.removeView(greenView); greenView = null; greenShown = false }
-            catch (e: Exception) { Log.e(TAG, "hideGreen error", e) }
-        }
-    }
-
-    private fun removeAll() {
-        if (redShown) removeRedNow()
-        hideGreen()
-    }
-
     // ─── Window Params ────────────────────────────────────────────────────────
 
     private fun overlayParams(): WindowManager.LayoutParams {
@@ -286,11 +246,6 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
 
-        // FLAG_NOT_FOCUSABLE:
-        //   ✅ Overlay receives touch events (unlike FLAG_NOT_TOUCHABLE)
-        //   ✅ Home/Back/Recents still work (no focus = no input method = system gestures pass)
-        //   ✅ No device freeze
-        //   ❌ Cannot receive keyboard input (we don't need it)
         val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -302,7 +257,7 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         )
     }
 
-    // ─── Alerts (fire exactly ONCE per detection) ─────────────────────────────
+    // ─── Alerts ───────────────────────────────────────────────────────────────
 
     private fun scamAlert() {
         vibrate(longArrayOf(0, 500, 200, 500))
@@ -312,11 +267,6 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
                 TextToSpeech.QUEUE_FLUSH, null, "SCAM"
             )
         }
-    }
-
-    private fun safeAlert() {
-        vibrate(longArrayOf(0, 100))
-        if (ttsReady) tts?.speak("Transaction looks safe.", TextToSpeech.QUEUE_FLUSH, null, "SAFE")
     }
 
     private fun vibrate(pattern: LongArray) {

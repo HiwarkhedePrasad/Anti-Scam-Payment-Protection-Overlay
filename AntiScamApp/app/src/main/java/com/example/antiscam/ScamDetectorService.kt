@@ -37,9 +37,9 @@ class ScamDetectorService : AccessibilityService(), TextToSpeech.OnInitListener 
         private const val TAG = "ScamDetector"
         private const val MONITOR_ALL_APPS = true
         private const val HOLD_MS = 2000L
-        private const val COOLDOWN_MS = 20_000L
-        private const val SCAM_THRESHOLD = 85.0
-        private const val SAFE_THRESHOLD = 30.0
+        private const val COOLDOWN_MS = 10_000L
+        private const val SCAM_THRESHOLD = 60.0
+        private const val SAFE_THRESHOLD = 15.0
         private const val SAFE_COOLDOWN_MS = 30_000L
     }
 
